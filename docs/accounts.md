@@ -8,15 +8,23 @@ on the dashboard.
 1. Click **Add New Account**.
 2. Pick a provider. Copilot first asks for **Sign In with GitHub** (your own seat) or
    **Organization Billing** (an organization's credits and spend). **Sign In with GitHub** then asks
-   for a domain: leave it blank for github.com, or enter your company's GHE.com address.
+   for a domain: leave it blank for github.com, or enter your company's GHE.com address. Claude first
+   asks for **Sign In with Browser** or **Long-Lived Token**.
 3. Finish the sign-in:
 
 | Sign-in | Providers | What to do |
 |---|---|---|
 | Browser | Claude, ChatGPT, Cursor, Antigravity, Devin | Sign in in the browser that opens. If it shows a code, paste it and click **Continue**. |
 | Device code | Amp, Copilot, Grok, Muse Code, OpenCode | Copy the code, click **Open Browser**, and enter it if the page doesn't fill it in. |
-| API key | Ollama, OpenRouter, Z.ai | Create a key on the linked page, paste it, and click **Add Account**. |
+| API key | DeepSeek, Ollama, OpenRouter, Plivo, Z.ai | Create a key on the linked page, paste it, and click **Add Account**. Plivo takes its Auth ID and Auth Token as `AUTH_ID:AUTH_TOKEN`. |
 | Organization billing | Copilot | Enter the organization and a token from an owner or billing manager, and click **Add Account**. |
+| Long-lived token | Claude | Paste a token from `claude setup-token` and click **Add Account**. |
+
+A Claude long-lived token can't read Claude's usage page, so OpenUsage sends one small model request
+per refresh and reads the limits Claude reports with it. It shows the Session, Weekly, and Fable limits
+Claude reports and no plan, Sonnet limit, extra usage, or resets. The request goes to Fable, whose
+answer carries the Fable limit. To replace the token, remove the
+account and add it again.
 
 If a sign-in fails, click **Try Again**.
 
@@ -40,6 +48,12 @@ its right-click menu. Return saves and Esc cancels.
 
 An account's page has a switch, a pin, and a drag handle for each metric. See
 [Hiding, pinning, and ordering metrics](dashboard.md#hiding-pinning-and-ordering-metrics).
+
+## Pick an account's currency
+
+An account that shows money has a **Currency** picker on its page. Leave it at Same as Settings, or
+pick As Reported or a currency such as Indian Rupee for that account alone. See
+[Currency](settings.md#currency).
 
 ## Replace an API key
 

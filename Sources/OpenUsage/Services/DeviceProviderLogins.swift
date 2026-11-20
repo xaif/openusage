@@ -273,7 +273,7 @@ enum ProviderLoginCatalog {
     static func login(for kind: ProviderKind, method: ProviderAuthMethod, organization: String, domain: GitHubDomain) -> any ProviderLogin {
         if method == .organizationToken { return CopilotOrganizationLogin(organization: organization) }
         return switch kind {
-        case .claude: ClaudeLogin()
+        case .claude: method == .oauth ? ClaudeLogin() : APIKeyLogin(kind: .claude)
         case .codex: CodexLogin()
         case .cursor: CursorLogin()
         case .amp: AmpLogin()
@@ -283,7 +283,7 @@ enum ProviderLoginCatalog {
         case .grok: GrokLogin()
         case .muse: MuseLogin()
         case .opencodeGo: OpenCodeLogin()
-        case .ollama, .openrouter, .zai: APIKeyLogin(kind: kind)
+        case .deepseek, .ollama, .openrouter, .plivo, .zai: APIKeyLogin(kind: kind)
         }
     }
 }

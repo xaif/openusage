@@ -3,6 +3,7 @@
 How each provider signs in and what its card shows.
 
 - Every value comes from the provider's API. The one estimate is ChatGPT's credits, at 4¢ each.
+- [Show Amounts In](settings.md#currency) can convert the amounts shown into another currency.
 - OpenUsage computes no spend from logs and applies no model pricing. A metric the provider does not
   report stays hidden.
 - Time ranges (Today, Yesterday, This Week, and the like) always show, at 0 when the provider
@@ -19,12 +20,14 @@ How each provider signs in and what its card shows.
 | Antigravity | Browser (Google OAuth) | Gemini 5h, Gemini, Argon, Claude 5h, Claude |
 | Copilot | Device code (GitHub or GHE.com) | Credits, Extra Usage, Chat, Completions |
 | Copilot organization | Organization and token | Org Credits, Org Spend |
+| DeepSeek | API key | Balance |
 | Devin | Browser (devin.ai) | Daily, Weekly, Extra Usage |
 | Grok | Device code (xAI) | Weekly, Extra Usage |
 | Muse Code | Device code (Meta) | Session, Weekly |
 | Ollama | API key | Session, Weekly, Monthly, Extra Usage, Today, Yesterday, Last 30 Days, Requests |
 | OpenCode | Device code (OpenCode Console) | Session, Weekly, Monthly |
 | OpenRouter | Management API key, or a standard API key | Balance, Today, Yesterday, This Week, This Month, Prior 30 Days, Key Limit, Budget, Free Requests |
+| Plivo | Auth ID and Auth Token | Credits |
 | Z.ai | API key | Session, Weekly, Web Searches, Limit Resets |
 
 ## What you grant
@@ -57,6 +60,8 @@ and add it again.
 
 - Sign in through claude.ai in your browser. If the browser shows a code instead of returning to the
   app, paste it into the sheet.
+- Or paste a long-lived token from `claude setup-token`. It shows only the Session, Weekly, and Fable
+  limits Claude reports, read with one small model request per refresh. See [Accounts](accounts.md#add-an-account).
 - The card reads the plan (Pro, Max, or Ultra) once an hour. Ultra has no 5-hour limit, so it has no
   Session row.
 - Extra Usage shows spend against the monthly limit, or the amount spent when there is no limit, in
@@ -151,6 +156,13 @@ Billing**, and enter the organization and a token from an owner or billing manag
 **Org Credits** (AI credits the organization used this month) and **Org Spend** (dollars billed
 beyond the included pool).
 
+## DeepSeek
+
+- Paste an API key from [platform.deepseek.com/api_keys](https://platform.deepseek.com/api_keys).
+- **Balance** is the total DeepSeek reports: granted and topped-up balance together, in the account's
+  currency (CNY or USD). An account with a balance in both shows both. It shows even at zero.
+- The right-click menu adds an **API Keys** link.
+
 ## Devin
 
 - Sign in to Devin in the browser that opens. The sheet closes when you're signed in.
@@ -226,6 +238,14 @@ limit resets at midnight UTC, and weeks start on Monday.
 
 The right-click menu adds a **Credits** link.
 
+## Plivo
+
+- Enter the Auth ID and Auth Token from the [Plivo console](https://console.plivo.com/dashboard/)
+  as `AUTH_ID:AUTH_TOKEN`, in one field.
+- **Credits** is the account's cash credits in USD, even at `$0 left`. The plan shows the billing
+  mode, Prepaid or Postpaid.
+- The right-click menu adds a **Console** link.
+
 ## Z.ai
 
 - Paste an API key from the [Z.ai key list](https://z.ai/manage-apikey/apikey-list).
@@ -242,6 +262,8 @@ report. The account's right-click menu starts with the reason.
 
 - **Sign-in expired.** Use **Sign In Again…** on the account's page.
 - **Rejected the API key.** Use **Replace API Key…** on the account's page.
+- **Can't read this account's saved sign-in.** A different version of OpenUsage saved it. Update
+  OpenUsage, or remove the account and add it again.
 - **Rate limited** and HTTP errors clear on a later refresh. See [Refreshing](refreshing.md).
 - Accounts from a CLIProxyAPI hub have their own messages. See
   [CLIProxyAPI hubs](cliproxyapi.md#when-something-goes-wrong).

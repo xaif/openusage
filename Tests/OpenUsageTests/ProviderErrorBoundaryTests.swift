@@ -9,6 +9,7 @@ private let ollamaBalance = #"{"included":{"balance_usd":72.5,"allowance_usd":10
 final class ProviderErrorBoundaryTests: XCTestCase {
     private static let keyedKinds: [(ProviderKind, AccountCredential)] = [
         (.copilot, .oauth(OAuthTokens(accessToken: "token"))),
+        (.deepseek, .apiKey("key")),
         (.devin, .oauth(OAuthTokens(accessToken: "key"))),
         (.ollama, .apiKey("key")),
         (.opencodeGo, .oauth(OAuthTokens(accessToken: "token"))),
@@ -48,6 +49,24 @@ final class ProviderErrorBoundaryTests: XCTestCase {
             let runtime = AccountProviderRuntime(account: account, vault: InMemoryCredentialVault(), http: RoutingHTTPClient { _ in .json("") })
             let snapshot = await runtime.refresh()
             XCTAssertEqual(snapshot.failure?.message, message)
+        }
+    }
+
+    func testASavedCredentialOfAnotherKindSaysSoWithoutAskingTheProvider() async throws {
+        let mismatched: [(ProviderKind, AccountCredential)] = [
+            (.codex, .apiKey("key")),
+            (.openrouter, .oauth(OAuthTokens(accessToken: "token")))
+        ]
+        for (kind, credential) in mismatched {
+            let snapshot = try await refresh(kind, credential: credential) { request in
+                XCTFail("\(kind) sent \(request.url)")
+                return .json("{}")
+            }
+            XCTAssertEqual(
+                snapshot.failure?.message,
+                "This version of OpenUsage can't read this account's saved sign-in. Update OpenUsage, or remove the account and add it again.",
+                "\(kind)"
+            )
         }
     }
 

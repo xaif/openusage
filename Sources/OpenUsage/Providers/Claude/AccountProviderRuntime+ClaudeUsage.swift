@@ -16,6 +16,7 @@ extension AccountProviderRuntime {
     /// since Anthropic answers frequent grants reads with 429s. The profile is read in the secondary-reads
     /// slot; a hub account reads it with its first usage read, so it shows its plan as soon as it appears.
     func refreshClaude(_ credential: AccountCredential) async throws -> ProviderUsage {
+        if case .apiKey(let token) = credential { return try await refreshClaudeToken(token) }
         let session = claudeSession(for: credential)
         let forced = claude.forcedReadsPending
         claude.forcedReadsPending = false
@@ -52,6 +53,9 @@ extension AccountProviderRuntime {
         guard account.kind == .claude else { return nil }
         let tag = LogTag.plugin("claude")
         let launched = claude.session == nil ? try? await loadCredential() : nil
+        // A long-lived token can't read the profile, so it has no plan to look up. Only a sign-in opens a
+        // session, so a token account is always caught here.
+        if case .apiKey? = launched { return nil }
         guard let session = claude.session ?? launched.map({ claudeSession(for: $0) }) else {
             AppLog.notice(tag, "\(account.cardID) hourly plan read skipped: no stored sign-in")
             return nil
